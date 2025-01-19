@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -59,7 +59,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-    SelectedPokemonItemProvider selectedPokemonItem = Provider.of<SelectedPokemonItemProvider>(context, listen: false);
+    SelectedPokemonItemProvider selectedPokemonItem =
+        Provider.of<SelectedPokemonItemProvider>(context, listen: false);
 
     Provider.of<PokemonProvider>(context, listen: false).eitherFailureOrPokemon(
       value: (selectedPokemonItem.number + 1).toString(),
