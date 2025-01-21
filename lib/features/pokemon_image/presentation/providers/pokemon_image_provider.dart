@@ -1,3 +1,4 @@
+import 'package:clean_architecture_sample/core/constants/constants.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../pokemon/business/entities/pokemon_entity.dart';
 import '../../business/entities/pokemon_image_entity.dart';
 import '../../business/usecases/get_pokemon_image.dart';
 import '../../data/datasources/pokemon_image_local_data_source.dart';
@@ -21,7 +23,8 @@ class PokemonImageProvider extends ChangeNotifier {
     this.failure,
   });
 
-  void eitherFailureOrPokemonImage() async {
+  void eitherFailureOrPokemonImage(
+      {required PokemonEntity pokemonEntity}) async {
     PokemonImageRepositoryImpl repository = PokemonImageRepositoryImpl(
       remoteDataSource: PokemonImageRemoteDataSourceImpl(
         dio: Dio(),
@@ -34,9 +37,16 @@ class PokemonImageProvider extends ChangeNotifier {
       ),
     );
 
+    String imageUrl = isShiny
+        ? pokemonEntity.sprites.other.officialArtwork.frontShiny
+        : pokemonEntity.sprites.other.officialArtwork.frontDefault;
+
     final failureOrPokemonImage =
         await GetPokemonImage(pokemonImageRepository: repository).call(
-      pokemonImageParams: PokemonImageParams(),
+      pokemonImageParams: PokemonImageParams(
+        name: pokemonEntity.name,
+        imageUrl: imageUrl,
+      ),
     );
 
     failureOrPokemonImage.fold(
